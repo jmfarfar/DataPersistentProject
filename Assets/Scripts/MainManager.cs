@@ -2,6 +2,8 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using Helper;
+using Model;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -43,7 +45,8 @@ public class MainManager : MonoBehaviour
             }
         }
 
-        LoadHighscore();
+        HighscoreData highscoreData = HighscoreManager.LoadHighscore();
+        Highscore.text = $"Best Score : {highscoreData.name} : {highscoreData.points}";
     }
 
     private void Update()
@@ -80,42 +83,11 @@ public class MainManager : MonoBehaviour
     {
         if (m_Points > m_PrevHighscore)
         {
-            SaveHighscore();
+            HighscoreManager.SaveHighscore(m_Points);
             Highscore.text = $"Best Score : {MenuManager.Instance.Name} : {m_Points}";
         }
 
         m_GameOver = true;
         GameOverText.SetActive(true);
-    }
-
-    [Serializable]
-    class HighscoreData
-    {
-        public string name;
-        public int points;
-    }
-
-    public void SaveHighscore()
-    {
-        HighscoreData highscoreData = new HighscoreData();
-        highscoreData.name = MenuManager.Instance.Name;
-        highscoreData.points = m_Points;
-
-        string json = JsonUtility.ToJson(highscoreData);
-
-        File.WriteAllText(Application.persistentDataPath + "/saveHighscore.json", json);
-        Debug.Log(Application.persistentDataPath);
-    }
-
-    public void LoadHighscore()
-    {
-        if (File.Exists(Application.persistentDataPath + "/saveHighscore.json"))
-        {
-            string data = File.ReadAllText(Application.persistentDataPath + "/saveHighscore.json");
-
-            var highscore = JsonUtility.FromJson<HighscoreData>(data);
-
-            m_PrevHighscore = highscore.points;
-        }
     }
 }
