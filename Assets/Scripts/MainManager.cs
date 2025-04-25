@@ -47,6 +47,7 @@ public class MainManager : MonoBehaviour
 
         HighscoreData highscoreData = HighscoreManager.LoadHighscore();
         Highscore.text = $"Best Score : {highscoreData.name} : {highscoreData.points}";
+        m_PrevHighscore = highscoreData.points;
     }
 
     private void Update()
